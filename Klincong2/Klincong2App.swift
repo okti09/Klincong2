@@ -11,7 +11,8 @@ import SwiftUI
 struct Klincong2App: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            //CleaningToolsView()
+            ToolPickerView()
         }
     }
 }

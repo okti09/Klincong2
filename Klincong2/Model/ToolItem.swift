@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct CleaningTools: Identifiable, Hashable {
+struct CleaningTool: Identifiable, Hashable {
     let id = UUID()
-    let icon: String
     let name: String
+    let imageName: String
 }

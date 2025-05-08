@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+//kodefix
 struct CleaningsTools: Identifiable, Hashable {
     let id = UUID()
     let name: String
@@ -33,10 +34,11 @@ struct ToolsPicker: View {
     ]
 
     let solutionTools: [CleaningTool] = [
-        .init(name: "Disinfectant", imageName: "img_disinfektan"),
-        .init(name: "Soap", imageName: "img_sabun"),
-        .init(name: "Bleach", imageName: "img_bleach"),
-        .init(name: "Floor Cleaner", imageName: "img_floorcleaner")
+        .init(name: "All Purpose Cleaner", imageName: "s_img_apc"),
+        .init(name: "Bathroom Cleaner", imageName: "s_bathroom-cleaner"),
+        .init(name: "Dish Soap", imageName: "s_dish-soap"),
+        .init(name: "Floor Cleaner", imageName: "s_floor-cleaner"),
+        .init(name: "Laundry Detergen", imageName: "s_laundry_detergent")
     ]
 
     var body: some View {
@@ -44,22 +46,21 @@ struct ToolsPicker: View {
             Color("biruy").ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // 🟡 HEADER
                 ZStack(alignment: .topTrailing) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Spacer().frame(height: 60)
-
-                        Text("Tools You’ve\nGot at Home")
+                        Spacer().frame(height: 50)
+                            .padding()
+                        Text("Which Tools\n Do You Have")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundColor(.black)
 
                         Text("Tap to choose!")
                             .font(.subheadline)
-                            .foregroundColor(.black.opacity(0.6))
+                            .foregroundColor(.black.opacity(0.8))
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, 32)
+                    .padding(.bottom, 55)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color("kuneng"))
                     .edgesIgnoringSafeArea(.top)
@@ -69,7 +70,7 @@ struct ToolsPicker: View {
                         .scaledToFit()
                         .frame(width: 275, height: 205)
                         .rotationEffect(.degrees(-25))
-                        .offset(x: 125, y: -5)
+                        .offset(x: 125, y: -6)
                 }
 
                 // 🔽 SCROLLABLE TOOL SECTIONS
@@ -92,30 +93,13 @@ struct ToolsPicker: View {
                                 .padding(.horizontal)
                                 .padding(.bottom, 24)
                         }
+                        .padding()
                         .disabled(selectedTools.isEmpty)
-                        .shadow(radius: 10)
 
-                       Spacer().frame(height: 120) // biar gak ketutup tombol
+                       //Spacer().frame(height: 120) // biar gak ketutup tombol
                     }
                 }
             }
-
-//            // 🟧 FLOATING BUTTON
-//            Button(action: {
-//                print("Continue tapped with tools: \(selectedTools.map { $0.name })")
-//            }) {
-//                Text("Continue")
-//                    .font(.headline)
-//                    .foregroundColor(.white)
-//                    .padding()
-//                    .frame(maxWidth: .infinity)
-//                    .background(selectedTools.isEmpty ? Color.gray : Color.orange)
-//                    .cornerRadius(20)
-//                    .padding(.horizontal)
-//                    .padding(.bottom, 24)
-//            }
-//            .disabled(selectedTools.isEmpty)
-//            .shadow(radius: 10)
         }
     }
 
@@ -160,7 +144,7 @@ struct ToolsCard: View {
                 Image(tool.imageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 150)
+                    .frame(width: 160, height: 180)
                     .saturation(isSelected ? 1 : 0)
                     .opacity(isSelected ? 1.0 : 0.4)
                     .animation(.easeInOut(duration: 0.3), value: isSelected)
@@ -183,5 +167,5 @@ struct ToolsCard: View {
 }
 
 #Preview {
-    ToolPickerView()
+    ToolsPicker()
 }

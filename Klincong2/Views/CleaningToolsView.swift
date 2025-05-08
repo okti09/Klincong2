@@ -8,26 +8,9 @@
 import Foundation
 import SwiftUI
 
-struct CleaningTool: Identifiable, Hashable {
-    let id = UUID()
-    let name: String
-    let imageName: String
-}
-
 struct CleaningToolsView: View {
-    
-    let tools: [CleaningTool] = [
-        CleaningTool(name: "Broom", imageName: "img_sapu"),
-        CleaningTool(name: "Mop", imageName: "mop"),
-        CleaningTool(name: "Dustpan", imageName: "dustpan"),
-        CleaningTool(name: "Vacuum", imageName: "vacuum"),
-        CleaningTool(name: "Duster", imageName: "duster"),
-        CleaningTool(name: "Sponge", imageName: "sponge"),
-        CleaningTool(name: "Vacuum", imageName: "vacuum"),
-        CleaningTool(name: "Duster", imageName: "duster"),
-        CleaningTool(name: "Sponge", imageName: "sponge")
-    ]
-    
+    let tools: [CleaningTool] // Menerima alat dari halaman sebelumnya
+
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
@@ -38,24 +21,26 @@ struct CleaningToolsView: View {
         VStack(spacing: 20) {
             Spacer(minLength: 40)
             
-            // Title
+            // Judul
             VStack(spacing: 4) {
-                Text("Here is Your")
+                Text(tools.isEmpty ? "No Tools Selected" : "Here is Your")
                     .font(.title3)
                     .fontWeight(.bold)
-                Text("Cleaning Tools")
-                    .font(.title)
-                    .fontWeight(.black)
+                if !tools.isEmpty {
+                    Text("Cleaning Tools")
+                        .font(.title)
+                        .fontWeight(.black)
+                }
             }
-            
-            // Grid
+
+            // Grid alat yang dipilih
             LazyVGrid(columns: columns, spacing: 32) {
                 ForEach(tools) { tool in
                     VStack(spacing: 10) {
                         Image(tool.imageName)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(height: 60)
+                            .frame(height: 90)
                         Text(tool.name)
                             .font(.subheadline)
                     }
@@ -66,9 +51,9 @@ struct CleaningToolsView: View {
             
             Spacer()
             
-            // Button
+            // Tombol aksi
             Button(action: {
-                print("Capture started!")
+                print("Capture started with tools: \(tools.map { $0.name })")
             }) {
                 Text("START CAPTURE TO CLEAN")
                     .foregroundColor(.white)
@@ -81,9 +66,8 @@ struct CleaningToolsView: View {
             .padding(.horizontal, 40)
             .padding(.bottom, 32)
         }
-        //.background(Color.yellow.opacity(0.3).ignoresSafeArea())
         .background(
-            Image("img_cleaningtools")
+            Image("img_cleaningtools") // Pastikan ada di asset
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
@@ -91,5 +75,8 @@ struct CleaningToolsView: View {
     }
 }
 #Preview {
-    CleaningToolsView()
+    CleaningToolsView(tools: [
+        .init(name: "Broom", imageName: "img_sapu"),
+        .init(name: "Mop", imageName: "img_pel")
+    ])
 }

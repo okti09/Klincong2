@@ -66,6 +66,7 @@ struct CleaningToolsView: View {
             .padding(.horizontal, 40)
             .padding(.bottom, 32)
         }
+        .navigationBarBackButtonHidden(true)
         .background(
             Image("img_cleaningtools") // Pastikan ada di asset
                 .resizable()

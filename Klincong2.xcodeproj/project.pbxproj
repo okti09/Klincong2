@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7226B9352DCDFEE300A85333 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 7226B9342DCDFEE300A85333 /* RiveRuntime */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		7226B86E2DCBA11B00A85333 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7226B9352DCDFEE300A85333 /* RiveRuntime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 				7226B85F2DCBA11A00A85333 /* Klincong2 */,
 				7226B8702DCBA11B00A85333 /* Klincong2Tests */,
 				7226B87A2DCBA11B00A85333 /* Klincong2UITests */,
+				7226B9332DCDFE6F00A85333 /* Frameworks */,
 				7226B85E2DCBA11A00A85333 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +96,13 @@
 				7226B8772DCBA11B00A85333 /* Klincong2UITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7226B9332DCDFE6F00A85333 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +125,7 @@
 			);
 			name = Klincong2;
 			packageProductDependencies = (
+				7226B9342DCDFEE300A85333 /* RiveRuntime */,
 			);
 			productName = Klincong2;
 			productReference = 7226B85D2DCBA11A00A85333 /* Klincong2.app */;
@@ -195,6 +209,9 @@
 			);
 			mainGroup = 7226B8542DCBA11A00A85333;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7226B8EE2DCD936700A85333 /* XCRemoteSwiftPackageReference "rive-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7226B85E2DCBA11A00A85333 /* Products */;
 			projectDirPath = "";
@@ -558,6 +575,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7226B8EE2DCD936700A85333 /* XCRemoteSwiftPackageReference "rive-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rive-app/rive-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.8.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7226B9342DCDFEE300A85333 /* RiveRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7226B8EE2DCD936700A85333 /* XCRemoteSwiftPackageReference "rive-ios" */;
+			productName = RiveRuntime;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7226B8552DCBA11A00A85333 /* Project object */;
 }

@@ -18,9 +18,15 @@ struct TaskCard: Identifiable {
 
 struct CardTaskView: View {
     let taskGroups: [TaskGroup]
+   // let tools: [ToolItem]
     @State private var currentGroup = 0
     @State private var isButtonDisabled = false
     @State private var completedGroups: Set<Int> = []
+    @State private var showRiveAnimation = false
+    @State private var showCongratsScreen = false
+    
+    let riveViewModel = CongratulationsViewModel(fileName: "congratulations-klincong")
+    
     
     var body: some View {
         ZStack {
@@ -28,27 +34,28 @@ struct CardTaskView: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
+            
+            if showRiveAnimation {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                riveViewModel.riveModel.view()
+                    .frame(width: 300, height: 300)
+            }
+            
             VStack(alignment: .leading, spacing: 0) {
                 Spacer()
-                Text("Here is Your")
+                Text("Time to Clean Up")
                     .font(.system(size: 28, weight: .regular))
                     .foregroundColor(.black)
+                // .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
-                Text("CLEANING\nTASK")
+                Text("Your Tools")
                     .font(.system(size: 36, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.horizontal, 40)
                     .padding(.bottom, 8)
-                Spacer().frame(height: 4)
+                //Spacer().frame(height: 4)
                 
-                // Paging indicator
-                HStack(spacing: 8) {
-                    ForEach(0..<taskGroups.count, id: \ .self) { idx in
-                        Circle()
-                            .fill(idx == currentGroup ? Color.black : Color.gray.opacity(0.3))
-                            .frame(width: 10, height: 10)
-                    }
-                }
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.bottom, 24)
                 if !taskGroups.isEmpty {
@@ -70,8 +77,14 @@ struct CardTaskView: View {
                                     Spacer().frame(height: 16)
                                     Button(action: {
                                         if currentGroup == taskGroups.count - 1 {
-                                            // All task done action here
-                                            // e.g. dismiss, callback, etc.
+                                            // Tampilkan animasi
+                                            showCongratsScreen = true
+                                            
+                                            // Sembunyikan animasi setelah beberapa detik (misal 3 detik)
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                                showRiveAnimation = false
+                                                // Bisa dismiss view atau navigasi ke halaman lain di sini
+                                            }
                                         } else {
                                             guard !isButtonDisabled && !completedGroups.contains(currentGroup) else { return }
                                             isButtonDisabled = true
@@ -111,15 +124,27 @@ struct CardTaskView: View {
                             }
                         }
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                        .frame(width: 320, height: 340)
+                        .frame(width: 380, height: 420)
                         Spacer(minLength: 16)
                     }
+                    HStack(spacing: 8) {
+                        ForEach(0..<taskGroups.count, id: \.self) { idx in
+                            Circle()
+                                .fill(idx == currentGroup ? Color.black : Color.gray.opacity(0.3))
+                                .frame(width: 10, height: 10)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.top, 16)
                 } else {
                     Text("No tasks available.")
                         .foregroundColor(.gray)
                         .padding()
                 }
                 Spacer()
+            }
+            .fullScreenCover(isPresented: $showCongratsScreen) {
+                CongratulationsView()
             }
         }
     }
@@ -146,4 +171,5 @@ struct CardTaskView: View {
     ]
     CardTaskView(taskGroups: dummyTasks)
 }
+
 

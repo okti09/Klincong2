@@ -37,7 +37,7 @@ struct ToolPickerView: View {
 
     var body: some View {
         ZStack {
-            Color("white").ignoresSafeArea()
+            Color(.white).ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // 🟡 Header

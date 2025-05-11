@@ -10,7 +10,7 @@ import SwiftUI
 import RiveRuntime
 
 struct CongratulationsView: View {
-    let model = CongratulationsViewModel(fileName: "klincong-congratulations")
+    let model = CongratulationsViewModel(fileName: "congratulations-klincong")
     //let model = PreparationTaskViewModel(fileName: "klincong-congratulations")
     
     var body: some View {

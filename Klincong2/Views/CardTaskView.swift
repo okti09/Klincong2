@@ -1,127 +1,149 @@
 //
 //  CardTaskView.swift
-//  Klincong2
+//  Klincong1
 //
-//  Created by Asri Oktianawati on 07/05/25.
+//  Created by Asri Oktianawati on 03/05/25.
 //
 
 import Foundation
 import SwiftUI
 
+struct TaskCard: Identifiable {
+    let id = UUID()
+    let title: String
+    let description: String
+    var isCompleted: Bool = false
+    var offset: CGSize = .zero
+}
+
 struct CardTaskView: View {
-    let total: Double = 5.0 //harus disesuaikan dengan berapa banyak tasknya
-    @State private var progress: Double = 0.0
-    @State private var tasks: [TaskCard] = [
-        TaskCard(title: "Membersihkan Kaca", description: "Gunakan kain lap dan cairan pembersih."),
-        TaskCard(title: "Mengelap Meja", description: "Gunakan lap basah untuk meja."),
-        TaskCard(title: "Membersihkan Lantai", description: "Sapu Lantai")
-    ]
-    
-    @State private var showNewTaskPage = false
-    @State private var skipCount = 0
+    let taskGroups: [TaskGroup]
+    @State private var currentGroup = 0
+    @State private var isButtonDisabled = false
+    @State private var completedGroups: Set<Int> = []
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 20) {
-                Text("Here's your\n cleaning task")
-                    .font(.largeTitle)
-                    .foregroundColor(.gray)
-                    .fontWeight(.bold)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                
-                HStack {
-                    ProgressView(value: progress, total: total)
-                        .progressViewStyle(LinearProgressViewStyle())
-                        .frame(height: 20)
-                        .accentColor(.yellow)
-                        .padding()
-                    
-                    Text("\(Int(progress))/\(Int(total))")
-                        .font(.headline)
-                        .padding()
-                }
-                
-                ForEach(tasks.indices, id: \.self) { index in
-                    let task = tasks[index]
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(task.title)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(task.isCompleted ? .white : .black)
-                        
-                        Text(task.description)
-                            .font(.subheadline)
-                            .foregroundColor(task.isCompleted ? .white : .black)
-                    }
-                    .padding()
-                    .frame(width: 340, height: 100)
-                    .background(task.isCompleted ? Color.gray.opacity(0.5) : Color.yellow.opacity(1))
-                    .cornerRadius(15)
-                    .offset(x: task.offset.width, y: 0)
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                tasks[index].offset = value.translation
-                            }
-                            .onEnded { value in
-                                if value.translation.width < -100 {
-                                    tasks[index].isCompleted = true
-                                }
-                                tasks[index].offset = .zero
-                            }
-                    )
-                    .animation(.easeInOut, value: task.offset)
-                }
-                
+        ZStack {
+            Image("background")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            VStack(alignment: .leading, spacing: 0) {
                 Spacer()
+                Text("Here is Your")
+                    .font(.system(size: 28, weight: .regular))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 40)
+                Text("CLEANING\nTASK")
+                    .font(.system(size: 36, weight: .bold))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 8)
+                Spacer().frame(height: 4)
                 
-                HStack(spacing: 20) {
-                    Button(action: {
-                        if skipCount < 3 {
-                            showNewTaskPage.toggle()
-                            progress += 1
-                            skipCount += 1
-                            tasks = loadNewTasks() // Menggunakan fungsi untuk mendapatkan task baru
-                        }
-                    }) {
-                        Text("Skip")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 40)
-                            .padding(.vertical, 12)
-                            .background(Color.orange)
-                            .cornerRadius(30)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 30)
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            )
-                    }
-                    
-                    Button(action: {
-                        withAnimation {
-                            if progress < total {
-                                progress += 1
-                            }
-                        }
-                    }) {
-                        Text("Finish")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 40)
-                            .padding(.vertical, 12)
-                            .background(Color.orange)
-                            .cornerRadius(30)
-                            .shadow(radius: 5)
+                // Paging indicator
+                HStack(spacing: 8) {
+                    ForEach(0..<taskGroups.count, id: \ .self) { idx in
+                        Circle()
+                            .fill(idx == currentGroup ? Color.black : Color.gray.opacity(0.3))
+                            .frame(width: 10, height: 10)
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.bottom, 24)
+                if !taskGroups.isEmpty {
+                    HStack {
+                        Spacer(minLength: 16)
+                        TabView(selection: $currentGroup) {
+                            ForEach(0..<taskGroups.count, id: \ .self) { idx in
+                                VStack(alignment: .leading, spacing: 12) {
+                                    ForEach(Array(taskGroups[idx].tasks.enumerated()), id: \ .offset) { tIdx, task in
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("Task \(tIdx+1)")
+                                                .font(.system(size: 15, weight: .semibold))
+                                                .foregroundColor(Color.blue)
+                                            Text(task.description)
+                                                .font(.system(size: 19, weight: .regular))
+                                                .foregroundColor(.black)
+                                        }
+                                    }
+                                    Spacer().frame(height: 16)
+                                    Button(action: {
+                                        if currentGroup == taskGroups.count - 1 {
+                                            // All task done action here
+                                            // e.g. dismiss, callback, etc.
+                                        } else {
+                                            guard !isButtonDisabled && !completedGroups.contains(currentGroup) else { return }
+                                            isButtonDisabled = true
+                                            completedGroups.insert(currentGroup)
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                                currentGroup += 1
+                                                isButtonDisabled = false
+                                            }
+                                        }
+                                    }) {
+                                        Text(currentGroup == taskGroups.count - 1 ? "All task done" : "DONE")
+                                            .font(.system(size: 20, weight: .bold))
+                                            .foregroundColor(.white)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 14)
+                                            .background(
+                                                (isButtonDisabled
+                                                 || (currentGroup != taskGroups.count - 1 && completedGroups.contains(currentGroup))
+                                                 || (currentGroup == taskGroups.count - 1 && completedGroups.count < taskGroups.count - 1)
+                                                ) ? Color.gray : Color.orange)
+                                            .cornerRadius(30)
+                                    }
+                                    .disabled(
+                                        isButtonDisabled
+                                        || (currentGroup != taskGroups.count - 1 && completedGroups.contains(currentGroup))
+                                        || (currentGroup == taskGroups.count - 1 && completedGroups.count < taskGroups.count - 1)
+                                    )
+                                    .padding(.top, 24)
+                                    .padding(.horizontal, 24)
+                                    .padding(.bottom, 24)
+                                }
+                                .padding(24)
+                                .background(Color(red: 0.82, green: 0.92, blue: 1.0))
+                                .cornerRadius(28)
+                                .padding(.horizontal, 8)
+                                .tag(idx)
+                            }
+                        }
+                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        .frame(width: 320, height: 340)
+                        Spacer(minLength: 16)
+                    }
+                } else {
+                    Text("No tasks available.")
+                        .foregroundColor(.gray)
+                        .padding()
+                }
+                Spacer()
             }
-            .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
+
+// Preview hanya untuk Xcode, tidak berpengaruh ke runtime
 #Preview {
-    CardTaskView()
+    let dummyTasks = [
+        TaskGroup(tasks: [
+            TaskItem(description: "Pick up trash"),
+            TaskItem(description: "Wipe table"),
+            TaskItem(description: "Sweep floor"),
+        ]),
+        TaskGroup(tasks: [
+            TaskItem(description: "Wipe table surface"),
+            TaskItem(description: "Clean up spilled water"),
+            TaskItem(description: "Arrange chairs neatly")
+        ]),
+        TaskGroup(tasks: [
+            TaskItem(description: "Sweep floor under the table"),
+            TaskItem(description: "Mop the kitchen floor"),
+            TaskItem(description: "Take out the trash bin")
+        ])
+    ]
+    CardTaskView(taskGroups: dummyTasks)
 }
+

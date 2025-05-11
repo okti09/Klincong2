@@ -1,16 +1,17 @@
 //
 //  CleaningToolsView.swift
-//  Klincong2
+//  Klincong1
 //
-//  Created by Asri Oktianawati on 08/05/25.
+//  Created by Shafa Tiara Tsabita Himawan on 09/05/25.
 //
 
 import Foundation
 import SwiftUI
 
 struct CleaningToolsView: View {
-    let tools: [CleaningTool] // Menerima alat dari halaman sebelumnya
-
+    let tools: [CleaningTool]
+    var onComplete: () -> Void
+    
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
@@ -53,7 +54,7 @@ struct CleaningToolsView: View {
             
             // Tombol aksi
             Button(action: {
-                print("Capture started with tools: \(tools.map { $0.name })")
+                onComplete()
             }) {
                 Text("START CAPTURE TO CLEAN")
                     .foregroundColor(.white)
@@ -66,9 +67,8 @@ struct CleaningToolsView: View {
             .padding(.horizontal, 40)
             .padding(.bottom, 32)
         }
-        .navigationBarBackButtonHidden(true)
         .background(
-            Image("img_cleaningtools") // Pastikan ada di asset
+            Image("background") // Pastikan ada di asset
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
@@ -76,8 +76,11 @@ struct CleaningToolsView: View {
     }
 }
 #Preview {
-    CleaningToolsView(tools: [
-        .init(name: "Broom", imageName: "img_sapu"),
-        .init(name: "Mop", imageName: "img_pel")
-    ])
+    CleaningToolsView(
+        tools: [
+            .init(name: "Broom", imageName: "img_sapu"),
+            .init(name: "Mop", imageName: "img_pel")
+        ],
+        onComplete: {}
+    )
 }

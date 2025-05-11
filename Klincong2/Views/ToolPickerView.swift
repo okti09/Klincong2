@@ -1,24 +1,16 @@
 //
-//ToolPickerView.Swift
-//Klincong2
-// Created by Asri Oktianawati
+//  ToolPickerView.swift
+//  Klincong1
+//
+//  Created by Shafa Tiara Tsabita Himawan on 09/05/25.
+//
 
-//Kode Cleaning Picker FIX
 import SwiftUI
 
-struct CleaningToolPicker: Identifiable, Hashable {
-    let id = UUID()
-    let name: String
-    let imageName: String
-}
-
-enum Route: Hashable {
-    case summary
-}
 
 struct ToolPickerView: View {
     @State private var selectedTools: Set<CleaningTool> = []
-    @State private var path: [Route] = []
+    var onToolsSelected: ([CleaningTool]) -> Void = { _ in }
 
     let dryTools: [CleaningTool] = [
         .init(name: "Broom", imageName: "img_sapu"),
@@ -44,72 +36,64 @@ struct ToolPickerView: View {
     ]
 
     var body: some View {
-        NavigationStack(path: $path) {
-            ZStack {
-                Color("kuneng").ignoresSafeArea()
+        ZStack {
+            Color("white").ignoresSafeArea()
 
-                VStack(spacing: 0) {
-                    // 🟡 Header
-                    ZStack(alignment: .topTrailing) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Spacer().frame(height: 60)
+            VStack(spacing: 0) {
+                // 🟡 Header
+                ZStack(alignment: .topTrailing) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Spacer().frame(height: 60)
 
-                            Text("Tools You’ve\nGot at Home")
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
+                        Text("Which Tools\n Do You Have?")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
 
-                            Text("Tap to choose!")
-                                .font(.subheadline)
-                                .foregroundColor(.black.opacity(0.6))
-                        }
-                        .padding(.horizontal)
-                        .padding(.bottom, 32)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                        Image("img_okcat")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 275, height: 205)
-                            .rotationEffect(.degrees(-25))
-                            .offset(x: 125, y: -5)
+                        Text("Tap to choose!")
+                            .font(.subheadline)
+                            .foregroundColor(.black)
                     }
-                    .frame(maxWidth: .infinity)
-                    .clipped()
+                    .padding(.horizontal)
+                    .padding(.bottom, 32)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                    // 🔽 Scroll + Tool Section
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 16) {
-                            toolSection(title: "Dry", tools: dryTools)
-                            toolSection(title: "Wet", tools: wetTools)
-                            toolSection(title: "Solution", tools: solutionTools)
-
-                            Button(action: {
-                                path.append(.summary)
-                            }) {
-                                Text("Continue")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .frame(maxWidth: .infinity)
-                                    .background(selectedTools.isEmpty ? Color.gray : Color.orange)
-                                    .cornerRadius(20)
-                                    .padding(.horizontal)
-                            }
-                            .padding(.top, 32)
-                            .padding(.bottom, 30)
-                            .disabled(selectedTools.isEmpty)
-                        }
-                        .padding(.top, 24)
-                        .background(Color("biruy"))
-                    }
+                    Image("img_okcat")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 275, height: 205)
+                        .rotationEffect(.degrees(-25))
+                        .offset(x: 125, y: -5)
                 }
-            }
-            .navigationDestination(for: Route.self) { route in
-                switch route {
-                case .summary:
-                    CleaningToolsView(tools: Array(selectedTools))
-                        .navigationBarBackButtonHidden(true)
+                .frame(maxWidth: .infinity)
+                //.background(.white)
+                .clipped()
+
+                // 🔽 Scroll + Tool Section
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 16) {
+                        toolSection(title: "Dry", tools: dryTools)
+                        toolSection(title: "Wet", tools: wetTools)
+                        toolSection(title: "Solution", tools: solutionTools)
+
+                        Button(action: {
+                            onToolsSelected(Array(selectedTools))
+                        }) {
+                            Text("Continue")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(selectedTools.isEmpty ? Color.gray : Color.orange)
+                                .cornerRadius(20)
+                                .padding(.horizontal)
+                        }
+                        .padding(.top, 32)
+                        .padding(.bottom, 30)
+                        .disabled(selectedTools.isEmpty)
+                    }
+                    .padding(.top, 24)
+                    .background(Color("biruy"))
                 }
             }
         }
@@ -123,7 +107,7 @@ struct ToolPickerView: View {
             .padding(.leading)
 
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 16) {
+            LazyHStack(spacing: 16) {
                 ForEach(tools) { tool in
                     ToolCard(tool: tool, isSelected: selectedTools.contains(tool)) {
                         toggleSelection(tool)
